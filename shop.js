@@ -1,7 +1,7 @@
 const PRODUCTS = {
   apple: { name: "Apple", emoji: "🍏" },
   banana: { name: "Banana", emoji: "🍌" },
-  lemon: { name: "Lemon", emoji: "🍋" },
+  orange: { name: "Orange", emoji: "🍊" },
 };
 
 const MAX_BASKET_ITEMS = 10;
