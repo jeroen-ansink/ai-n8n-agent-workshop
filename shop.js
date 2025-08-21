@@ -5,6 +5,7 @@ const PRODUCTS = {
 };
 
 const MAX_BASKET_ITEMS = 10;
+const THEME_STORAGE_KEY = "theme"; // 'light' | 'dark'
 
 function getBasket() {
   const basket = localStorage.getItem("basket");
@@ -97,12 +98,71 @@ function renderBasketIndicator() {
   }
 }
 
+// Theme helpers
+function getSavedTheme() {
+  return localStorage.getItem(THEME_STORAGE_KEY);
+}
+
+function prefersDark() {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function applyTheme(theme) {
+  const root = document.documentElement;
+  if (theme === 'dark') {
+    root.setAttribute('data-theme', 'dark');
+  } else {
+    root.removeAttribute('data-theme'); // default light
+  }
+}
+
+function setTheme(theme) {
+  localStorage.setItem(THEME_STORAGE_KEY, theme);
+  applyTheme(theme);
+}
+
+function currentTheme() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+
+function injectThemeToggle() {
+  // Avoid duplicates
+  if (document.getElementById('themeToggle')) return;
+  const headerCenter = document.querySelector('.header-center');
+  if (!headerCenter) return;
+  const btn = document.createElement('button');
+  btn.id = 'themeToggle';
+  btn.className = 'theme-toggle';
+  const isDark = currentTheme() === 'dark';
+  btn.setAttribute('aria-pressed', String(isDark));
+  btn.title = 'Toggle dark mode';
+  btn.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+  btn.addEventListener('click', function () {
+    const nowDark = currentTheme() === 'dark';
+    const next = nowDark ? 'light' : 'dark';
+    setTheme(next);
+    btn.setAttribute('aria-pressed', String(next === 'dark'));
+    btn.textContent = next === 'dark' ? '☀️ Light' : '🌙 Dark';
+  });
+  headerCenter.appendChild(btn);
+}
+
+function initializeTheme() {
+  const saved = getSavedTheme();
+  const initial = saved ? saved : (prefersDark() ? 'dark' : 'light');
+  applyTheme(initial);
+}
+
 // Call this on page load and after basket changes
 if (document.readyState !== "loading") {
+  initializeTheme();
+  injectThemeToggle();
   renderBasketIndicator();
   updateAddToBasketButtonState();
 } else {
   document.addEventListener("DOMContentLoaded", function () {
+    initializeTheme();
+    injectThemeToggle();
     renderBasketIndicator();
     updateAddToBasketButtonState();
   });
