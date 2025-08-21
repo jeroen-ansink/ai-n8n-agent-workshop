@@ -13,7 +13,7 @@
 
 - Fork repository & Add SCRUM issue:
   - https://github.com/tlolkema/ai-demo-webshop
-  - Untick "main branch only"
+  - Untick "main branch only."
   - Enable the "Issues" tab for forked repositories (Setting > General > Features > Issues)
   - Write your own scrum issue or copy an example from the repository
 
